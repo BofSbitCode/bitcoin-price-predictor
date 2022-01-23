@@ -19,3 +19,5 @@ after downloding dataset (if you donwloded from kaggle you have to edit it) put 
 you can see the model code and edited to get better result in <code>model.py</code> or <code>model.ipynb</code>
 
 #### Warning ⛔  : never use this for trade, it's just study project but it can be developed for a trade bot, but it's still untrustable
+
+p.s : you can see the <code>model.ipynb</code> and <code>dataset</code> in .../BTC price predictor 
