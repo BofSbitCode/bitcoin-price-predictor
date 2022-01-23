@@ -5,8 +5,8 @@ predict price of bitcoin with python and tensorflow
 ## How to get dataset
 
 for original dataset you can downloded from here :  <a href='https://www.kaggle.com/tencars/392-crypto-currency-pairs-at-minute-resolution'>click hare for kaggle link</a><br>
-but you can donwlod edited version form here : <a href='https://drive.google.com/file/d/1tEEWiy45V6nDN13wvtJSaEiaQ4adLzW5/view?usp=sharing'>click hare for drive link</a><br>
-drive link can be old ( 2013-4-1 0:7:00 to 2021-11-19 0:7:00 ) cause its dont update any more but kaggle dataset need to edit and convert from min by min type to day by day
+or you can use old dataset in this git repository( 2013-4-1 0:7:00 to 2021-11-19 0:7:00 ) cause its dont update any more but kaggle dataset need to edit and convert from min by min type to day by day
+
 
 
 ## How to run code and get own result
