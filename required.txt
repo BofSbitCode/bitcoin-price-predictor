@@ -1,0 +1,10 @@
+datetime
+zipfile36
+pandas
+urllib3
+progressbar
+numpy
+matplotlib
+scikit-learn
+tensorflow
+keras
