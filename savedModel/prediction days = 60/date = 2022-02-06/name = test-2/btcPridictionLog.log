@@ -1,0 +1,46 @@
+Bitcoin price predictior
+year,month,day,hour,min,sec >>> [ type ] : user +++ ms +++ end.
+2022-2-8  19:4:4 >>> [ start ] : cbofsbit | importing libraries | end.
+2022-2-8  19:4:4 >>> [ successful ] : cbofsbit | importing libraries | end.
+2022-2-8  19:4:4 >>> [ reading ] : cbofsbit | reading .updateTime | end.
+2022-2-8  19:4:4 >>> [ return ] : cbofsbit | start date = 2022-02-08 00:00:00 end date = 2022-02-08 00:00:00 | end.
+2022-2-8  19:4:4 >>> [ successful ] : cbofsbit | reading .updateTime | end.
+2022-2-8  19:4:4 >>> [ calcutaing ] : cbofsbit | calcutaing day between start date and end date | end.
+2022-2-8  19:4:4 >>> [ return ] : cbofsbit | day between start date and end date = 0 | end.
+2022-2-8  19:4:4 >>> [ successful ] : cbofsbit | calcutaing day between start date and end date | end.
+2022-2-8  19:4:4 >>> [ reading ] : cbofsbit | reading day by day dataset | end.
+2022-2-8  19:4:4 >>> [ successful ] : cbofsbit | reading day by day dataset | end.
+2022-2-8  19:4:4 >>> [ spliting ] : cbofsbit | spliting dataset to smaler part | end.
+2022-2-8  19:4:4 >>> [ return ] : cbofsbit | smaler size after split = 100 | end.
+2022-2-8  19:4:4 >>> [ successful ] : cbofsbit | spliting dataset to smaler part | end.
+2022-2-8  19:4:4 >>> [ spliting ] : cbofsbit | spliting dataset to train part and test part | end.
+2022-2-8  19:4:4 >>> [ return ] : cbofsbit | test size after split = 365 | end.
+2022-2-8  19:4:4 >>> [ successful ] : cbofsbit | spliting dataset to train part and test part | end.
+2022-2-8  19:4:4 >>> [ scaling ] : cbofsbit | scaling data in 0,1 | end.
+2022-2-8  19:4:4 >>> [ successful ] : cbofsbit | scaling data in 0,1 | end.
+2022-2-8  19:4:4 >>> [ making ] : cbofsbit | making xTrain and yTain | end.
+2022-2-8  19:4:4 >>> [ successful ] : cbofsbit | making xTrain and yTrain | end.
+2022-2-8  19:4:4 >>> [ train ] : cbofsbit | training start | end.
+2022-2-8  19:42:3 >>> [ successful ] : cbofsbit | training finishd | end.
+2022-2-8  19:42:3 >>> [ saving ] : cbofsbit | saving model | end.
+2022-2-8  19:42:3 >>> [ successful ] : cbofsbit | saving model | end.
+2022-2-8  19:42:3 >>> [ plot ] : cbofsbit | ploting loss history of trainig model | end.
+2022-2-8  19:42:4 >>> [ successful ] : cbofsbit | ploting loss history of trainig model | end.
+2022-2-8  19:42:4 >>> [ loading ] : cbofsbit | loading saved model | end.
+2022-2-8  19:42:5 >>> [ successful ] : cbofsbit | loading saved model | end.
+2022-2-8  19:42:5 >>> [ test ] : cbofsbit | predicting price | end.
+2022-2-8  19:42:7 >>> [ calcutaing ] : cbofsbit | calcutaing tomorrow price | end.
+2022-2-8  19:42:7 >>> [ successful ] : cbofsbit | calcutaing tomorrow price | end.
+2022-2-8  19:42:7 >>> [ return ] : cbofsbit | tomorrow price = 41447 | end.
+2022-2-8  19:42:7 >>> [ saving ] : cbofsbit | saving tomorrow price prediction | end.
+2022-2-8  19:42:7 >>> [ successful ] : cbofsbit | saving tomorrow price prediction | end.
+2022-2-8  19:42:7 >>> [ successful ] : cbofsbit | predicting price | end.
+2022-2-8  19:42:7 >>> [ plot ] : cbofsbit | ploting prediction price and actual price | end.
+2022-2-8  19:42:7 >>> [ successful ] : cbofsbit | ploting prediction price and actual price | end.
+2022-2-8  19:42:7 >>> [ saving ] : cbofsbit | saving prediction price and actual price plot | end.
+2022-2-8  19:42:7 >>> [ successful ] : cbofsbit | saving prediction price and actual price plot | end.
+2022-2-8  19:42:7 >>> [ making ] : cbofsbit | making predict csv and making accuracy list | end.
+2022-2-8  19:42:7 >>> [ successful ] : cbofsbit | making predict csv and making accuracy list | end.
+2022-2-8  19:42:7 >>> [ calcutaing ] : cbofsbit | calcutaing accuracy | end.
+2022-2-8  19:42:7 >>> [ return ] : cbofsbit | avrage accuracy = 95.41711215800667 max accuracy = 99.95633069241386 min accuracy = 76.09839141502809 increases and decreases and decreases accuracy = 0.9532967032967034 count of correct increases and decreases = 347 count of flase increases and decreases = 17 | end.
+2022-2-8  19:42:7 >>> [ successful ] : cbofsbit | calcutaing accuracy | end.
