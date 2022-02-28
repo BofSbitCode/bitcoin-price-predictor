@@ -3,7 +3,7 @@ predict price of bitcoin with python and tensorflow
 <br><br>
 
 ## Get dataset
-Get edited dataset from drive link : <a href = 'https://drive.google.com/file/d/1CjZB1DWnM_BMzg-EeE6PfyUeXvhW_TMg/view?usp=sharing'>click hare for google drive link</a><br>
+You can use <code>bitcoin2013to2022.zip</code> in <code>dataset</code> folder<br>
 or orginal dataset from kaggle link : <a href='https://www.kaggle.com/tencars/392-crypto-currency-pairs-at-minute-resolution'>click hare for kaggle link</a><br>
 p.s : In kaggle dataset first you should edit dataset for using in model but drive link has already been edited.
 after downloding dataset put it in <code>dataset/</code> or you can put it anywhere and copy the path of dataset in <code>config.cfg baseDataSetPath</code><br><br>
