@@ -330,7 +330,18 @@ class bitcoinPricePredictor():
                 accuracy.append(100-((row['prediction price']*100/row['price'])-100))
             else:   
                 accuracy.append(100)
-        distanceAndAccuracy = pd.DataFrame({'distance':distance,'accuracy':accuracy})#([distance,accuracy],columns=['distance','accuracy']
+        counter = 0
+        price = dataframe['price']
+        pprice = dataframe['prediction price']
+        accuracyPerChanges = []
+        for index in range (1,len(dataframe)+1):
+            if index == 1:
+                lastPrice = int(trainPrice[len(trainPrice)-1])
+                accuracyPerChanges.append(accuracyFunction(initial=lastPrice,real=price[counter],predicted=pprice[counter]))
+            else:
+                accuracyPerChanges.append(accuracyFunction(initial=price[counter-1],real=price[counter],predicted=pprice[counter]))
+            counter += 1
+        distanceAndAccuracy = pd.DataFrame({'distance':distance,'accuracy':accuracy,'accuracy':accuracyPerChanges})
         dataframe = pd.concat([dataframe,distanceAndAccuracy], axis=1)
 
         dataframe.to_csv('../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/prediction table | testSize = '+str(self.testSize)+'.csv',index=False)
@@ -351,6 +362,19 @@ class bitcoinPricePredictor():
                     false += 1
         self.writeLog('making predict csv and making accuracy list','successful')
         return accuracy,correct,false
+
+    def accuracyFunction(initial, real, predicted):
+        real_changes = real - initial
+        prediction_changes = predicted - initial
+        Max = max(abs(real_changes), abs(prediction_changes))
+        Min = min(abs(real_changes), abs(prediction_changes))
+        Max *= (Max == real_changes or Max == prediction_changes) * 2 - 1
+        Min *= (Min == real_changes or Min == prediction_changes) * 2 - 1
+        result = Min / Max * 100
+        if result < 0:
+            return 0
+        else:
+            return result
 
     def acc(self,accuracy,correct,false):
         self.writeLog('calcutaing accuracy','calcutaing')
