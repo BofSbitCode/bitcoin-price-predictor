@@ -21,7 +21,7 @@ from contextlib import redirect_stdout
 
 class bitcoinPricePredictor():
     parser = ConfigParser()
-    parser.readfp(open('../config/config.cfg'))
+    parser.read_file(open('../config/config.cfg'))
     predictionDays = int(parser.get("runing model configuration", "predictionDays"))
     doTrain = parser.get("runing model configuration", "doTrain")
     doTest = parser.get("runing model configuration", "doTest")
@@ -37,6 +37,13 @@ class bitcoinPricePredictor():
     unit = parser.get("runing and testing model configuration","unit")
     exchange = parser.get("runing and testing model configuration","exchange")
     timeStemp = parser.get("runing and testing model configuration","timeStemp")
+    with open('../.updateTime','r') as updateTime:
+        startDate = updateTime.readline()
+    startDate = datetime.strptime(startDate, '%Y-%m-%d %H:%M:%S')
+    endDate = datetime.now()
+    endDate = endDate.strftime("%Y-%m-%d")
+    endDate = datetime.strptime(endDate, "%Y-%m-%d")
+    ms = str('start date = '+endDate.strftime('%Y-%m-%d %H:%M:%S')+' end date = '+startDate.strftime('%Y-%m-%d %H:%M:%S'))
     user = str(getlogin())
 
     def read(self,parse):
@@ -45,13 +52,13 @@ class bitcoinPricePredictor():
         self.writeLog('reading day by day dataset','successful')
         return data
 
-    def update(self):
+    def update(self,dayBetween):
         def daterange(start_date, end_date):
             for n in range(int ((end_date - start_date).days)):
                 yield start_date + timedelta(n)
         
         self.writeLog('reading base dataset','reading')
-        data = pd.read_csv(baseDataSetPath)
+        data = pd.read_csv(self.baseDataSetPath)
         self.writeLog('reading base dataset','successful')
 
         self.writeLog('making price and time list from base dataset','making')
@@ -60,10 +67,10 @@ class bitcoinPricePredictor():
         self.writeLog('making price and time list from base dataset','successful')
 
         self.writeLog('downloding new data','downloding')
-        bar = progressbar.ProgressBar(maxval=dayBetweenStartAndEnt, widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+        bar = progressbar.ProgressBar(maxval=dayBetween, widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
         bar.start()
         count = 0
-        for single_date in daterange(startDate, endDate):
+        for single_date in daterange(self.startDate, self.endDate):
             time = single_date.strftime("%Y-%m-%d")
             url = 'https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1m/BTCUSDT-1m-'+time+'.zip'
             zipPath = '../dataset/zip/'+time+'.zip'
@@ -121,19 +128,6 @@ class bitcoinPricePredictor():
             ms = 'Bitcoin price predictior\nyear,month,day,hour,min,sec >>> [ type ] : user +++ ms +++ end.\n'
             temp_file.write(ms)
 
-    def updateTime(self):
-        self.writeLog('reading .updateTime','reading')
-        with open('../.updateTime','r') as updateTime:
-            startDate = updateTime.readline()
-        startDate = datetime.strptime(startDate, '%Y-%m-%d %H:%M:%S')
-        endDate = datetime.now()
-        endDate = endDate.strftime("%Y-%m-%d")
-        endDate = datetime.strptime(endDate, "%Y-%m-%d")
-        ms = str('start date = '+endDate.strftime('%Y-%m-%d %H:%M:%S')+' end date = '+startDate.strftime('%Y-%m-%d %H:%M:%S'))
-        self.writeLog(ms,'return')
-        self.writeLog('reading .updateTime','successful')
-        return startDate,endDate
-
     def writeLog(self,entry,typed):
         now = tm.localtime()
         user = str(self.user)
@@ -142,9 +136,9 @@ class bitcoinPricePredictor():
         wrr.write(ms)
         print(ms)
     
-    def dayBetweenStartAndEnd(self,endDate,startDate):
+    def dayBetweenStartAndEnd(self):
         self.writeLog('calcutaing day between start date and end date','calcutaing')
-        dayBetweenStartAndEnt =  endDate-startDate
+        dayBetweenStartAndEnt =  self.endDate-self.startDate
         dayBetweenStartAndEnt = dayBetweenStartAndEnt.days
         ms = str('day between start date and end date = '+str(dayBetweenStartAndEnt))
         self.writeLog(ms,'return')
@@ -183,10 +177,10 @@ class bitcoinPricePredictor():
         df.to_csv(self.dataSetPath,index=False)
         self.writeLog('making day by day dataset','successful')
     
-    def updateUpdateTimetxt(self,endDate):
+    def updateUpdateTimetxt(self):
         self.writeLog('updating .updateTime','updating')
         with open('../.updateTime','w') as updateTime:
-            updateTime.write(str(endDate))
+            updateTime.write(str(self.endDate))
         self.writeLog('updating .updateTime','successful')
 
     def splitDataset(self,data):
@@ -303,7 +297,6 @@ class bitcoinPricePredictor():
         return (predictionPrice,actualPrices)
 
     def predictTomorrow(self,predictionPrice):
-        startDate,endDate = self.updateTime()
         self.writeLog('calcutaing tomorrow price','calcutaing')
         tomorrowPrice = int(predictionPrice[len(predictionPrice)-1])
         self.writeLog('calcutaing tomorrow price','successful')
@@ -311,10 +304,10 @@ class bitcoinPricePredictor():
         self.writeLog(ms,'return')
         self.writeLog('saving tomorrow price prediction','saving')
         with open('../tomorrowPrice','w') as file:
-            file.write(str(endDate.strftime("%Y-%m-%d"))+' 14:30:00(UTC) >>>>> '+str(tomorrowPrice))
+            file.write(str(self.endDate.strftime("%Y-%m-%d"))+' 14:30:00(UTC) >>>>> '+str(tomorrowPrice))
         self.writeLog('saving tomorrow price prediction','successful')        
 
-    def makepredictcsv(self,predictionPrice,test):
+    def makepredictcsv(self,predictionPrice,test,trainPrice):
         self.writeLog('making predict csv and making accuracy list','making')
         predictionPrice = pd.DataFrame(predictionPrice, columns=['prediction price'])
         predictionPrice = predictionPrice.reset_index(drop=True)
@@ -323,7 +316,7 @@ class bitcoinPricePredictor():
         distance = []
         accuracy = []
         for index, row in dataframe.iterrows():
-            distance.append(row['prediction price']-row['price'])
+            distance.append(abs(row['prediction price']-row['price']))
             if row['prediction price']-row['price'] < 0:
                 accuracy.append(row['prediction price']*100/row['price'])
             elif row['prediction price']-row['price'] > 0:
@@ -337,11 +330,11 @@ class bitcoinPricePredictor():
         for index in range (1,len(dataframe)+1):
             if index == 1:
                 lastPrice = int(trainPrice[len(trainPrice)-1])
-                accuracyPerChanges.append(accuracyFunction(initial=lastPrice,real=price[counter],predicted=pprice[counter]))
+                accuracyPerChanges.append(self.accuracyFunction(initial=lastPrice,real=price[counter],predicted=pprice[counter]))
             else:
-                accuracyPerChanges.append(accuracyFunction(initial=price[counter-1],real=price[counter],predicted=pprice[counter]))
+                accuracyPerChanges.append(self.accuracyFunction(initial=price[counter-1],real=price[counter],predicted=pprice[counter]))
             counter += 1
-        distanceAndAccuracy = pd.DataFrame({'distance':distance,'accuracy':accuracy,'accuracy':accuracyPerChanges})
+        distanceAndAccuracy = pd.DataFrame({'error abs(distance)':distance,'accuracy per distance':accuracy,'accuracy':accuracyPerChanges})
         dataframe = pd.concat([dataframe,distanceAndAccuracy], axis=1)
 
         dataframe.to_csv('../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/prediction table | testSize = '+str(self.testSize)+'.csv',index=False)
@@ -361,9 +354,9 @@ class bitcoinPricePredictor():
                 else:
                     false += 1
         self.writeLog('making predict csv and making accuracy list','successful')
-        return accuracy,correct,false
+        return accuracyPerChanges,correct,false
 
-    def accuracyFunction(initial, real, predicted):
+    def accuracyFunction(self,initial, real, predicted):
         real_changes = real - initial
         prediction_changes = predicted - initial
         Max = max(abs(real_changes), abs(prediction_changes))
@@ -503,15 +496,14 @@ class bitcoinPricePredictor():
         return timeList
 
     def infofile(self,avgAccuracy,maxAccuracy,minAccuracy,correct,false,datasetLenght,dataset):
-        startDate,endDate = self.updateTime()
         data = {
                 "info":
                         {
                         "head":
                                 {
-                                "update time" : str(startDate.strftime("%Y-%m-%d %H:%M:%S")),
+                                "update time" : str(self.startDate.strftime("%Y-%m-%d %H:%M:%S")),
                                 "name" : str(self.modelname),
-                                "model date" :  str(endDate.strftime("%Y-%m-%d %H:%M:%S")),
+                                "model date" :  str(self.endDate.strftime("%Y-%m-%d %H:%M:%S")),
                                 "description" : str(self.description)
                                 },
                         "path configuration":

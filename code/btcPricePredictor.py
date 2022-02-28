@@ -11,13 +11,12 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras import models  
 predictor.writeLog('importing libraries','successful')
-startDate,endDate = predictor.updateTime()
-dayBetweenStartAndEnt = predictor.dayBetweenStartAndEnd(endDate,startDate)
-if dayBetweenStartAndEnt != 0 :
-    totalPriceList,totalDateList = predictor.update()
+dayBetween = predictor.dayBetweenStartAndEnd()
+if dayBetween != 0 :
+    totalPriceList,totalDateList = predictor.update(dayBetween)
     predictor.writeDatasetcsv(totalPriceList,totalDateList)
     predictor.writeDayByDaycsv()
-    predictor.updateUpdateTimetxt(endDate)
+    predictor.updateUpdateTimetxt()
 data = predictor.read(True)
 splitSize = predictor.splitDataset(data)
 test,train = predictor.makeTestAndTrainPartWithTestSize(data)
@@ -29,7 +28,7 @@ if predictor.doTest == 'True' :
     predictionPrice,actualPrices = predictor.predict(test,train,model)
     if predictor.predictTomorrow == 'True':
         predictor.predictTomorrow(predictionPrice)
-    accuracy,correct,false = predictor.makepredictcsv(predictionPrice,test)
+    accuracy,correct,false = predictor.makepredictcsv(predictionPrice,test,train['price'])
     avgAccuracy,minAccuracy,maxAccuracy = predictor.acc(accuracy,correct,false)
     data = predictor.read(False)
     datasetLenght = len(data)
