@@ -50,16 +50,16 @@ class bitcoinPricePredictor():
             for n in range(int ((end_date - start_date).days)):
                 yield start_date + timedelta(n)
         
-        predictor.writeLog('reading base dataset','reading')
+        self.writeLog('reading base dataset','reading')
         data = pd.read_csv(baseDataSetPath)
-        predictor.writeLog('reading base dataset','successful')
+        self.writeLog('reading base dataset','successful')
 
-        predictor.writeLog('making price and time list from base dataset','making')
+        self.writeLog('making price and time list from base dataset','making')
         totalPriceList = list(data['price'])
         totalDateList = list(data['time'])
-        predictor.writeLog('making price and time list from base dataset','successful')
+        self.writeLog('making price and time list from base dataset','successful')
 
-        predictor.writeLog('downloding new data','downloding')
+        self.writeLog('downloding new data','downloding')
         bar = progressbar.ProgressBar(maxval=dayBetweenStartAndEnt, widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
         bar.start()
         count = 0
