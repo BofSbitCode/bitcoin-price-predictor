@@ -158,22 +158,16 @@ class bitcoinPricePredictor():
     def writeDayByDaycsv(self):
         self.writeLog('making day by day dataset','making')
         dateFrame = pd.read_csv(self.baseDataSetPath)
-        Timestamp = list(dateFrame['time'])
-        timeLengh = len(Timestamp)-(len(Timestamp)%1440)
-        time = []
-        timenow = datetime.now()
-        for i in range(0,timeLengh,1440):
-            time.append(Timestamp[i])
-        time.append(Timestamp[len(Timestamp)-570])
-        time.append(timenow.strftime("%Y-%m-%d")+' 14:30:00')
-        Close = list(dateFrame['price'])
-        price = []
-        priceLengh = len(Close)-(len(Close)%1440)
-        for i in range(0,priceLengh,1440):
-            price.append(str(Close[i])  ) 
-        price.append(Close[len(Close)-7])
-        price.append(50000)
-        df = pd.DataFrame(data={'price':price,'time':time})
+        file = open(self.baseDataSetPath,'r')
+        file = file.readlines()
+        daybyday = 'price,time\n'
+        for i in file:
+            if '14:30:00' in i:
+                daybyday += i
+        with open(self.dataSetPath,'w') as test:
+            test.write(daybyday)
+        df = pd.read_csv(self.dataSetPath)
+        df = df.drop_duplicates()
         df.to_csv(self.dataSetPath,index=False)
         self.writeLog('making day by day dataset','successful')
     
@@ -224,15 +218,8 @@ class bitcoinPricePredictor():
 
     def trainModel(self,xTrain,yTrain):
         self.writeLog('training start','train')
-        model = Sequential()
-        model.add(LSTM(units=100,return_sequences=True,input_shape=(xTrain.shape[1],1)))
-        model.add(Dropout(0.25))
-        model.add(LSTM(units=50,return_sequences=True))
-        model.add(Dropout(0.25))
-        model.add(LSTM(units=50))
-        model.add(Dropout(0.25))
-        model.add(Dense(units=1))
-        model.compile(optimizer='adam',loss='mean_squared_error')
+        from model import Model
+        model = Model(xTrain)
         with open('../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/modelSummary.info', 'w') as f:
             with redirect_stdout(f):
                 model.summary()
