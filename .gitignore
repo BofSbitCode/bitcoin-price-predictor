@@ -4,5 +4,4 @@ savedModel
 dataset/csv
 dataset/
 *.csv
-*.updateTime
-
+!.updateTime
