@@ -21,7 +21,7 @@ from contextlib import redirect_stdout
 
 class bitcoinPricePredictor():
     parser = ConfigParser()
-    parser.read_file(open('../config/config.cfg'))
+    parser.read_file(open('../config.cfg'))
     predictionDays = int(parser.get("runing model configuration", "predictionDays"))
     doTrain = parser.get("runing model configuration", "doTrain")
     doTest = parser.get("runing model configuration", "doTest")
@@ -103,7 +103,7 @@ class bitcoinPricePredictor():
 
     def config(self):
         parser = ConfigParser()
-        parser.readfp(open('../config/config.cfg'))
+        parser.readfp(open('../config.cfg'))
         #updateTime = parser.get("updateTime configuration", "updateTime")
         predictionDays = parser.get("runing model configuration", "predictionDays")
         #predictionDays = parser.get("predictionDays")
