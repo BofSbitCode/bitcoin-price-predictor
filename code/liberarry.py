@@ -195,7 +195,6 @@ class bitcoinPricePredictor():
         testSize = lenDateFrameLeft-trainSize
         train = leftDF.iloc[:trainSize]
         test = leftDF.iloc[trainSize:]
-        #print('Size of train =',trainSize,'| Size of left =',testSize)
         return test,train
 
     def scaler(self,train):
@@ -223,6 +222,11 @@ class bitcoinPricePredictor():
         with open('../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/modelSummary.info', 'w') as f:
             with redirect_stdout(f):
                 model.summary()
+        data = open('model.py','r')
+        data = data.read()
+        file = open('../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/model.py','w')
+        file.write(data)
+        file.close()
         print('\n')
         model.fit(xTrain,yTrain,epochs=self.epochs,batch_size=32) 
         print('\n')
