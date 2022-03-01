@@ -1,5 +1,5 @@
 code/__pycache__/
-config/config.cfg
+*config.cfg
 savedModel
 dataset/csv
 dataset/
