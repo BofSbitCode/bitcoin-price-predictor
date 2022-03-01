@@ -5,3 +5,4 @@ dataset/csv
 dataset/
 *.csv
 *.updateTime
+savedModel/
