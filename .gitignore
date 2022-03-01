@@ -1,8 +1,8 @@
-code/__pycache__/liberarry.cpython-38.pyc
+code/__pycache__/
 config/config.cfg
 savedModel
 dataset/csv
-dataset/zip
-dataset/bitcoin2013to2022DayByDay.csv
-dataset/bitcoin2013to2022.csv
-.updateTime
+dataset/
+*.csv
+*.updateTime
+
