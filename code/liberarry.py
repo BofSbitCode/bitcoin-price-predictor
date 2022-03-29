@@ -18,7 +18,6 @@ import os
 from os import getlogin
 import json
 from contextlib import redirect_stdout
-
 class bitcoinPricePredictor():
     parser = ConfigParser()
     parser.read_file(open('../config.cfg'))
@@ -45,13 +44,11 @@ class bitcoinPricePredictor():
     endDate = datetime.strptime(endDate, "%Y-%m-%d")
     ms = str('start date = '+endDate.strftime('%Y-%m-%d %H:%M:%S')+' end date = '+startDate.strftime('%Y-%m-%d %H:%M:%S'))
     user = str(getlogin())
-
     def read(self,parse):
         self.writeLog('reading day by day dataset','reading')
         data = pd.read_csv(self.dataSetPath,index_col='time',parse_dates=parse)
         self.writeLog('reading day by day dataset','successful')
         return data
-
     def update(self,dayBetween):
         def daterange(start_date, end_date):
             for n in range(int ((end_date - start_date).days)):
@@ -100,7 +97,6 @@ class bitcoinPricePredictor():
             bar.update(count)   
         bar.finish()
         return totalPriceList,totalDateList
-
     def config(self):
         parser = ConfigParser()
         parser.readfp(open('../config.cfg'))
@@ -119,7 +115,6 @@ class bitcoinPricePredictor():
         predictTomorrow = parser.get("runing and testing model configuration","predictTomorrow")
         usr = getlogin()
         return (predictTomorrow,doTrain,doTest,baseDataSetPath,dataSetPath,testSize)
-
     def creatLogFile(self):
         path = '../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/'
         if not os.path.exists(path):
@@ -127,15 +122,13 @@ class bitcoinPricePredictor():
         with open('../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/btcPridictionLog.log', 'w') as temp_file:
             ms = 'Bitcoin price predictior\nyear,month,day,hour,min,sec >>> [ type ] : user +++ ms +++ end.\n'
             temp_file.write(ms)
-
     def writeLog(self,entry,typed):
         now = tm.localtime()
         user = str(self.user)
         ms = (str(now.tm_year)+'-'+str(now.tm_mon)+'-'+str(now.tm_mday)+'  '+ str(now.tm_hour)+':'+str(now.tm_min)+':'+ str(now.tm_sec) + ' >>> ' + '[ ' + typed + ' ]' + ' : ' + user + ' | ' + entry + ' | end.\n')
         wrr = open('../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/btcPridictionLog.log','a')
         wrr.write(ms)
-        print(ms)
-    
+        print(ms)  
     def dayBetweenStartAndEnd(self):
         self.writeLog('calcutaing day between start date and end date','calcutaing')
         dayBetweenStartAndEnt =  self.endDate-self.startDate
@@ -145,7 +138,6 @@ class bitcoinPricePredictor():
         self.writeLog('calcutaing day between start date and end date','successful')
 
         return dayBetweenStartAndEnt
-
     def writeDatasetcsv(self,totalPriceList,totalDateList):
         self.writeLog('downloding new data','successful')
         self.writeLog('updating base dataset','updating')
@@ -154,7 +146,6 @@ class bitcoinPricePredictor():
         df = df.drop_duplicates()
         df.to_csv(self.baseDataSetPath,index=False)
         self.writeLog('updating base dataset','successful')
-
     def writeDayByDaycsv(self):
         self.writeLog('making day by day dataset','making')
         dateFrame = pd.read_csv(self.baseDataSetPath)
@@ -169,14 +160,12 @@ class bitcoinPricePredictor():
         df = pd.read_csv(self.dataSetPath)
         df = df.drop_duplicates()
         df.to_csv(self.dataSetPath,index=False)
-        self.writeLog('making day by day dataset','successful')
-    
+        self.writeLog('making day by day dataset','successful')   
     def updateUpdateTimetxt(self):
         self.writeLog('updating .updateTime','updating')
         with open('../.updateTime','w') as updateTime:
             updateTime.write(str(self.endDate))
         self.writeLog('updating .updateTime','successful')
-
     def splitDataset(self,data):
         self.writeLog('spliting dataset to smaler part','spliting')
         lenDateFrame = len(data)  
@@ -186,7 +175,6 @@ class bitcoinPricePredictor():
         self.writeLog(ms,'return')
         self.writeLog('spliting dataset to smaler part','successful')
         return splitSize    
-
     def makeTestAndTrainPartWithPersent(self,data):
         leftDF = data.iloc[self.splitSize:]
         df = data.iloc[self.splitSize:]
@@ -196,14 +184,12 @@ class bitcoinPricePredictor():
         train = leftDF.iloc[:trainSize]
         test = leftDF.iloc[trainSize:]
         return test,train
-
     def scaler(self,train):
         self.writeLog('scaling data in 0,1','scaling')
         scaler = MinMaxScaler(feature_range=(0,1))
         scaledData = scaler.fit_transform(train['price'].values.reshape(-1,1))
         self.writeLog('scaling data in 0,1','successful')
         return scaledData
-
     def makeXtrainAndyTrain(self,scaledData):
         self.writeLog('making xTrain and yTain','making')
         xTrain,yTrain = [],[]
@@ -214,7 +200,6 @@ class bitcoinPricePredictor():
         xTrain = np.reshape(xTrain, (xTrain.shape[0], xTrain.shape[1], 1))
         self.writeLog('making xTrain and yTrain','successful')
         return xTrain,yTrain
-
     def trainModel(self,xTrain,yTrain):
         self.writeLog('training start','train')
         from model import Model
@@ -240,7 +225,6 @@ class bitcoinPricePredictor():
         plt.savefig('../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/lossplot.png')
         self.writeLog('ploting loss history of trainig model','successful')
         return model
-
     def makeTestAndTrainPartWithTestSize(self,data):
         self.writeLog('spliting dataset to train part and test part','spliting')
         leftDF = data.iloc[self.splitngSize:]
@@ -253,7 +237,6 @@ class bitcoinPricePredictor():
         self.writeLog(ms,'return')
         self.writeLog('spliting dataset to train part and test part','successful')
         return test,train
-
     def predict(self,test,train,model):
         self.writeLog('predicting price','predicting')
         self.writeLog('loading saved model','loading')
@@ -286,7 +269,6 @@ class bitcoinPricePredictor():
         self.writeLog('saving prediction price and actual price plot','saving')
         plt.savefig('../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/prediction plot | testSize = '+str(self.testSize)+'.png')
         return (predictionPrice,actualPrices)
-
     def predictTomorrow(self,predictionPrice):
         self.writeLog('calcutaing tomorrow price','calcutaing')
         tomorrowPrice = int(predictionPrice[len(predictionPrice)-1])
@@ -297,7 +279,6 @@ class bitcoinPricePredictor():
         with open('../tomorrowPrice','w') as file:
             file.write(str(self.endDate.strftime("%Y-%m-%d"))+' 14:30:00(UTC) >>>>> '+str(tomorrowPrice))
         self.writeLog('saving tomorrow price prediction','successful')        
-
     def makepredictcsv(self,predictionPrice,test,trainPrice):
         self.writeLog('making predict csv and making accuracy list','making')
         predictionPrice = pd.DataFrame(predictionPrice, columns=['prediction price'])
@@ -346,7 +327,6 @@ class bitcoinPricePredictor():
                     false += 1
         self.writeLog('making predict csv and making accuracy list','successful')
         return accuracyPerChanges,correct,false
-
     def accuracyFunction(self,initial, real, predicted):
         real_changes = real - initial
         prediction_changes = predicted - initial
@@ -359,7 +339,6 @@ class bitcoinPricePredictor():
             return 0
         else:
             return result
-
     def acc(self,accuracy,correct,false):
         self.writeLog('calcutaing accuracy','calcutaing')
         totalAccuracy = 0
@@ -372,12 +351,10 @@ class bitcoinPricePredictor():
         self.writeLog(ms,'return')
         self.writeLog('calcutaing accuracy','successful')
         return avgAccuracy,minAccuracy,maxAccuracy
-
     def BTCtoUSDT(btc,btcPrice):
         return btcPrice*btc
     def USDTtoBTC(usdt,btcPrice):
         return usdt/btcPrice
-
     def trainBot(dataframe,btc,usdt,nowPrice):
         for index, row in dataframe.iterrows():
             if row['prediction price'] > nowPrice:
@@ -392,7 +369,6 @@ class bitcoinPricePredictor():
                 print(usdt,btc,'sell')
         usdt = usdt + BTCtoUSDT(btc,40000)
         return usdt     
-
     def api():
         print('start')
         import datetime as dt
@@ -446,7 +422,6 @@ class bitcoinPricePredictor():
         bars1m = bars1m.reset_index().set_index(['date','ticker'])
         print(bars1m)
         bars1m('close')(i) == df('close')(i)
-
     def archive(data,hour):
         selected = []
         for i in data:
@@ -458,8 +433,7 @@ class bitcoinPricePredictor():
         with open('../dataset/archive/bitcoin2013to2022DayByDay hour = '+hour+'.csv','w') as file:
             file.write('price,time\n')
             for i in selected:
-                file.write(i)
-        
+                file.write(i)     
     def dataset():
         data = open('../dataset/-bitcoin2013to2022.csv','r')
         data = data.readlines()
@@ -472,7 +446,6 @@ class bitcoinPricePredictor():
             archive(data,time[i])
             count = count + 1
             bar.update(count)   
-
     def makeTimeList():
         d0 = datetime(2018,3,21, 0, 30, 0)
         d1 = datetime(2018,3,21,23,59,59)
@@ -485,7 +458,6 @@ class bitcoinPricePredictor():
             time = time.split('1 ')
             timeList.append(time[1])
         return timeList
-
     def infofile(self,avgAccuracy,maxAccuracy,minAccuracy,correct,false,datasetLenght,dataset):
         data = {
                 "info":
