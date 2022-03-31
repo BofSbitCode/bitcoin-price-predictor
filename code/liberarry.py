@@ -2,6 +2,7 @@
 from datetime import timedelta, date, datetime
 import datetime as tm
 import zipfile
+import tensorflow as tf
 import pandas as pd
 import urllib.request
 import progressbar
@@ -213,8 +214,10 @@ class bitcoinPricePredictor():
         file.write(data)
         file.close()
         print('\n')
-        model.fit(xTrain,yTrain,epochs=self.epochs,batch_size=32) 
-        print('\n')
+        checkpointPath = '../savedModel/'+'prediction days = '+(str(self.predictionDays))+'/date = '+self.modelDate+'/name = '+self.modelname+'/model.h5'
+        model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpointPath,save_weights_only=True,monitor='val_accuracy',mode='max',save_best_only=True)
+        model.fit(xTrain,yTrain,validation_split=self.splitngSize/100,epochs=self.epochs,callbacks=[model_checkpoint_callback],batch_size=32) 
+        print('\n') 
         self.writeLog('training finishd','successful')
         lossPerEpoch = model.history.history['loss']
         self.writeLog('saving model','saving')

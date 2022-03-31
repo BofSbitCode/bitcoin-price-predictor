@@ -1,3 +1,7 @@
+from termcolor import colored
+checkConfig = input(colored('Are you sure you want to run the code ','yellow')+'['+colored('Y','green')+colored('/','white')+colored('n','red')+']? ')
+if not(checkConfig in ['yes', 'Y', 'y', 'Yes']):
+    exit()
 from liberarry import bitcoinPricePredictor
 predictor = bitcoinPricePredictor()
 predictor.creatLogFile()
@@ -18,9 +22,8 @@ if dayBetween != 0 :
     predictor.writeDayByDaycsv()
     predictor.updateUpdateTimetxt()
 data = predictor.read(True)
-splitSize = predictor.splitDataset(data)
 test,train = predictor.makeTestAndTrainPartWithTestSize(data)
-scaledData = predictor.scaler(train)
+scaledData = predictor.scaler(data)
 xTrain,yTrain = predictor.makeXtrainAndyTrain(scaledData)
 if predictor.doTrain == 'True' :
     model = predictor.trainModel(xTrain,yTrain)    
